@@ -41,11 +41,16 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($credentials))
             return response()->json(['error' => 'Unauthorized'], 401);
 
+        $user = auth()->user();
+        $pages = $user->pagesWithPivot->load('modules');
+        $expires_in = auth()->factory()->getTTL() * 60;
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'pages' => $pages,
+            'expires_in' => $expires_in,
+            'user' => $user
         ]);
     }
 

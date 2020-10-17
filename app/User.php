@@ -60,4 +60,33 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function workspace()
+    {
+        return $this->belongsTo(Workspace::class);
+    }
+
+    public function pages()
+    {
+        return $this->belongsToMany(Page::class);
+    }
+
+    public function pagesWithPivot()
+    {
+        return $this->pages()
+            ->withPivot('read', 'update', 'delete', 'create');
+    }
+
+    public function chat()
+    {
+        return $this->hasMany(UserMessage::class,'sender_user_id', 'recipient_user_id');
+    }
+
+    public function getMessages($recipient_id)
+    {
+        return $this->chat()
+            ->where('recipient_user_id', $recipient_id)
+            ->where('sender_user_id', $this->id)
+            ->get();
+    }
 }
