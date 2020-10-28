@@ -3,14 +3,26 @@
 namespace App\Http\Controllers\Dashboards;
 
 use App\Http\Controllers\Controller;
+use App\Services\PermissionService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AgentsController extends Controller
 {
+    private $permissionService;
+
+    public function __construct(
+        PermissionService $permissionService
+    )
+    {
+        $this->permissionService = $permissionService;
+    }
+
     public function agents()
     {
+        $this->permissionService->hasPermission('Agents', 'read');
+
         $data = [];
 
         $ocurrence = [
@@ -71,6 +83,8 @@ class AgentsController extends Controller
     }
 
     public function distribution() {
+        $this->permissionService->hasPermission('Agents', 'read');
+
         $data = [];
 
         $ocurrence = [
@@ -109,6 +123,8 @@ class AgentsController extends Controller
     }
 
     public function distributionByHour() {
+        $this->permissionService->hasPermission('Agents', 'read');
+
         $data = [];
 
         $colunas = [

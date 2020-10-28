@@ -22,9 +22,9 @@ class UserController extends Controller
 
     public function all()
     {
-        $this->permissionService->hasPermission('Agents', 'read');
+        $this->permissionService->hasPermission('Usuários', 'read');
 
-        return User::get([
+        return User::whereNotIn('id', [auth()->user()->id])->get([
             'id',
             'name',
             'email'
@@ -33,6 +33,8 @@ class UserController extends Controller
 
     public function create()
     {
+        $this->permissionService->hasPermission('Usuários', 'create');
+
         try {
             DB::beginTransaction();
             $inputs = request()->all();
@@ -97,7 +99,17 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        return User::where('id', $id)->destroy();
+        $this->permissionService->hasPermission('Usuários', 'delete');
+
+        try {
+            User::where('id', $id)
+                ->firstOrFail()
+                ->delete();
+
+            return response([], 200);
+        } catch (\Exception $exception) {
+            return response($exception, 500);
+        }
     }
 
     public function updateUser($user_id)

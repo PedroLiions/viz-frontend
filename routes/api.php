@@ -21,6 +21,8 @@ Route::group([
 
         Route::put('{user_id}', 'UserController@updateUser');
 
+        Route::delete('{user_id}', 'UserController@destroy');
+
         Route::get('pages-and-permissions/{user_id}', 'UserController@pagesAndPermissions');
 
     });

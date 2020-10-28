@@ -32,8 +32,8 @@ class PageUser extends Migration
                 ->default(false)
                 ->comment('Permission of delete');
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('page_id')->references('id')->on('pages');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
 
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ class PermissionService
         $page_user = auth()->user()->pagesWithPivot()->where('name', $page)->first();
 
         if (! $page_user || ! $page_user->pivot->{$permission}) {
-            abort(401);
+            abort(401, 'Você não tem permissão para acessar esses recursos.');
         }
     }
 }
