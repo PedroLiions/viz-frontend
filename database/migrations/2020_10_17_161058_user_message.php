@@ -24,6 +24,7 @@ class UserMessage extends Migration
             $table->foreign('sender_user_id')->references('id')->on('users');
             $table->foreign('recipient_user_id')->references('id')->on('users');
 
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }

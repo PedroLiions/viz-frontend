@@ -55,7 +55,7 @@ class FunnelController extends Controller
 
         $colunas = [
             'Total of portfolio',
-            '%Penetrated',
+            '%Spin Rate',
             'Attempts',
             'Answered',
             'CPC',

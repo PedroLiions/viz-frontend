@@ -13,7 +13,7 @@ class ComparativeController extends Controller
 
         $colunas = [
             'Contratos',
-            'Agnt logados',
+            'Agentes',
             'Tentativas',
             'Tent/ Agnt',
             '%Hit rate',
@@ -32,7 +32,7 @@ class ComparativeController extends Controller
             '%Negc /CPCA',
             '%Improd',
             '%Linha muda',
-            '%Voz de máquina',
+            '%Voz Máq',
             'Spin rate',
             '%Incorreto',
         ];
@@ -72,7 +72,7 @@ class ComparativeController extends Controller
             $ocurrence = [
                 'Segmento',
                 'Empresa',
-                'Faixa de atraso',
+                'Faixa Atraso',
                 'Tentativas',
                 '%Hit rate',
                 '%CPC',
@@ -86,7 +86,7 @@ class ComparativeController extends Controller
                     'Perfil' => 'PF',
                     'Segmento' => 'Consignado',
                     'Empresa' => 'Flex',
-                    'Faixa de atraso' => '15-60',
+                    'Faixa Atraso' => '15-60',
                     'Tentativas' => mt_rand(000000, 999999),
                     '%Hit rate' => mt_rand(00, 99) . "%",
                     '%CPC' => mt_rand(00, 99) . "%",

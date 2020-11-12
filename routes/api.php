@@ -226,4 +226,7 @@ Route::group([
     });
 
 
+    Route::get('search', 'SearchController@search');
+
+
 });

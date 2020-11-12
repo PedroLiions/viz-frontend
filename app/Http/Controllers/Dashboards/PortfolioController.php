@@ -58,7 +58,7 @@ class PortfolioController extends Controller
         $data = [];
 
         $colunas = [
-            'Faixa de atraso',
+            'Faixa Atraso',
             'Segmento',
             'Ocorrência',
             'Total carteira',

@@ -19,6 +19,8 @@ class CreatePagesTable extends Migration
             $table->string('name');
             $table->string('route');
 
+            $table->string('description');
+
             $table->unsignedInteger('module_id');
             $table->foreign('module_id')
                 ->references('id')
