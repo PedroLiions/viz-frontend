@@ -109,7 +109,7 @@ Route::group([
 
             Route::get('', 'AgentsController@bestTime');
 
-            Route::get('distribution-by-hour', 'AgentsController@distributionByHour');
+            Route::get('distribution-by-hour', [\App\Http\Controllers\Dashboards\AgentsController::class, 'distributionByHour']);
 
         });
 

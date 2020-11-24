@@ -3,20 +3,25 @@
 namespace App\Http\Controllers\Dashboards;
 
 use App\Http\Controllers\Controller;
+use App\Services\NumberService;
 use App\Services\PermissionService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AgentsController extends Controller
 {
     private $permissionService;
+    private $numberService;
 
     public function __construct(
-        PermissionService $permissionService
+        PermissionService $permissionService,
+        NumberService $numberService
     )
     {
         $this->permissionService = $permissionService;
+        $this->numberService = $numberService;
     }
 
     public function agents()
@@ -88,7 +93,7 @@ class AgentsController extends Controller
         $data = [];
 
         $ocurrence = [
-            'Agente',
+            'Agentes',
             'Tentativas',
             'Atendidas',
             'CPC',
@@ -101,7 +106,7 @@ class AgentsController extends Controller
 
         for ($i = 0; $i < count($ocurrence); $i++) {
             $data[$i] = (object) [
-                'Agente' => mt_rand(000, 1000),
+                'Agentes' => mt_rand(000, 1000),
                 'Tentativas' => mt_rand(000, 1000),
                 'Atendidas' => mt_rand(000, 1000),
                 'CPC' => mt_rand(000, 1000),
@@ -123,53 +128,135 @@ class AgentsController extends Controller
     }
 
     public function distributionByHour() {
+//        $data = [];
+//
+//        $colunas = [
+//            'TOTAL',
+//            '00h',
+//            '01h',
+//            '02h',
+//            '03h',
+//            '04h',
+//            '05h',
+//            '06h',
+//            '07h',
+//            '08h',
+//            '09h',
+//            '10h',
+//            '11h',
+//            '12h',
+//            '13h',
+//            '14h',
+//            '15h',
+//            '16h',
+//            '17h',
+//            '18h',
+//            '19h',
+//            '20h',
+//            '21h',
+//            '22h',
+//            '23h',
+//        ];
+//
+//        for ($i = 0; $i < count($colunas); $i++) {
+//
+//            $data[$i] = (object) [
+//                'Hora' => $colunas[$i],
+//                'Tentativas' => mt_rand(00, 100),
+//                'Atendidas' => mt_rand(00, 100),
+//                '%Hit rate' => mt_rand(00, 100),
+//                '%CPC' => mt_rand(00, 100),
+//                '%CPCA' => mt_rand(00, 100),
+//                'Negociações' => mt_rand(00, 100),
+//                '%Negc' => mt_rand(00, 100),
+//                'Best time' => mt_rand(00, 100),
+//            ];
+//
+//        }
         $this->permissionService->hasPermission('Agents', 'read');
 
-        $data = [];
+        $query = "select
+                    [hour] as 'Hora',
+                    sum([Tentativa]) as 'Tentativas',
+                    sum([Atendida]) as 'Atendidas',
+                    sum([CPC]) as 'CPC',
+                    sum([CPCA]) as 'CPCA',
+                    sum([Promessa]) as 'Promessas'
+                from
+                    ftAnalyticsIndicadoresV2 with (nolock)
+                WHERE
+                      Date >= '2020-11-18'
+                  AND Date <= '2020-11-18'
+                  AND client = 'BRADESCO'
+                group by hour
+                order by hour";
 
-        $colunas = [
-            'TOTAL',
-            '00h',
-            '01h',
-            '02h',
-            '03h',
-            '04h',
-            '05h',
-            '06h',
-            '07h',
-            '08h',
-            '09h',
-            '10h',
-            '11h',
-            '12h',
-            '13h',
-            '14h',
-            '15h',
-            '16h',
-            '17h',
-            '18h',
-            '19h',
-            '20h',
-            '21h',
-            '22h',
-            '23h',
-        ];
+        $data = DB::connection('sqlsrv')->select($query);
 
-        for ($i = 0; $i < count($colunas); $i++) {
+        $dataTotal = (object) [];
 
-            $data[$i] = (object) [
-                'Hora' => $colunas[$i],
-                'Best time' => mt_rand(00, 100),
-                'Tentativas' => mt_rand(00, 100),
-                'Atendidas' => mt_rand(00, 100),
-                '%Hit rate' => mt_rand(00, 100),
-                '%CPC' => mt_rand(00, 100),
-                '%CPCA' => mt_rand(00, 100),
-                'Negociações' => mt_rand(00, 100),
-                '%Negc' => mt_rand(00, 100)
+        $dataTotal->Hora = 'Total';
+        $dataTotal->Tentativas = array_reduce($data, fn ($sum, $item) => $sum + $item->Tentativas);
+        $dataTotal->Tentativas = $this->numberService->formatThousands($dataTotal->Tentativas);
+        $dataTotal->Atendidas = array_reduce($data, fn ($sum, $item) => $sum + $item->Atendidas);
+        $dataTotal->Atendidas = $this->numberService->formatThousands($dataTotal->Atendidas);
+
+        #calc total cpc
+        $totalCPC = array_reduce($data, fn ($sum, $item) => $sum + $item->CPC);
+        $percentCPC = ($totalCPC > 0) ? (
+                $totalCPC / (($dataTotal->Tentativas !== 0) ? $dataTotal->Tentativas : 1)
+            ) * 100
+            : 0;
+        $dataTotal->{'%CPC'} = $this->numberService->formatPercent($percentCPC);
+
+        #calc total cpca
+        $totalCPCA = array_reduce($data, fn ($sum, $item) => $sum + $item->CPCA);
+        $percentCPCA = ($totalCPCA > 0) ? (
+                $totalCPCA / (($totalCPC !== 0) ? $totalCPC : 1)
+            ) * 100
+            : 0;
+        $dataTotal->{'%CPCA'} = $this->numberService->formatPercent($percentCPCA);
+
+        #calc negociacoes
+        $negociacoes = array_reduce($data, fn ($sum, $item) => $sum + $item->Promessas);
+
+        $percentNegc = ($negociacoes > 0) ? (
+                $negociacoes / (($totalCPCA !== 0) ? $totalCPCA : 1)
+            ) * 100
+            : 0;
+
+        $dataTotal->{'Negociações'} = $this->numberService->formatPercent($negociacoes);
+        $dataTotal->{'%Negc'} = $this->numberService->formatPercent($percentNegc);
+        #end calc total
+
+        $data = array_map( function ($item) {
+            $percentCPC = ($item->CPC > 0) ? (
+                $item->CPC / (($item->Atendidas !== 0) ? $item->Atendidas : 1)
+            ) * 100
+            : 0;
+
+            $percentCPCA = ($item->CPCA > 0) ? (
+                $item->CPCA / (($item->Atendidas !== 0) ? $item->Atendidas : 1)
+            ) * 100
+            : 0;
+
+            $percentNegc = ($item->Promessas > 0) ? (
+                $item->Promessas / (($item->CPCA !== 0) ? $item->CPCA : 1)
+            ) * 100
+            : 0;
+
+            return [
+                'Hora' => "{$item->Hora}h",
+                'Tentativas' => $this->numberService->formatThousands($item->Tentativas),
+                'Atendidas' => $this->numberService->formatThousands($item->Atendidas),
+                '%CPC' => "{$this->numberService->formatPercent($percentCPC)}%",
+                '%CPCA' => "{$this->numberService->formatPercent($percentCPCA)}%",
+                'Negociações' => $this->numberService->formatThousands($item->Promessas),
+                '%Negc' => $percentNegc
             ];
+        }, $data);
 
-        }
+        array_unshift($data, $dataTotal);
 
         return response()->json([
             'data' => $data,

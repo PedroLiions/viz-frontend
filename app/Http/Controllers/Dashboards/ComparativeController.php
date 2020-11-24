@@ -12,45 +12,45 @@ class ComparativeController extends Controller
         $data = [];
 
         $colunas = [
-            'Contratos',
-            'Agentes',
-            'Tentativas',
-            'Tent/ Agnt',
-            '%Hit rate',
-            'Atendidas',
-            'CPC',
-            'CPC/ Agnt',
-            '%CPC/ Atend',
-            'CPCA',
-            'CPCA /Agnt',
-            '%CPCA/ Atend',
-            'Negociações',
-            'Negc /Agnt',
-            '%Negc/ Tent',
-            '%Negc/ Atend',
-            '%Negc /CPC',
-            '%Negc /CPCA',
-            '%Improd',
-            '%Linha muda',
-            '%Voz Máq',
-            'Spin rate',
-            '%Incorreto',
+            'TOTAL',
+            'Indicador',
+            'Oliveira',
+            'Toledo',
+            'Rn',
+            'Bellinati',
+            'Flex',
+            'Crc',
+            'Pasquali',
+            'Pasquali1',
+            'Pasquali2',
         ];
 
         for ($i = 0; $i < count($colunas); $i++) {
 
             $data[$i] = (object) [
-                'Indicador' => $colunas[$i],
-                'TOTAL' => mt_rand(800000, 999999),
-                'Oliveira' => mt_rand(000000, 300000),
-                'Toledo' => mt_rand(000000, 300000),
-                'Rn' => mt_rand(000000, 300000),
-                'Bellinati' => mt_rand(000000, 300000),
-                'Flex' => mt_rand(000000, 300000),
-                'Crc' => mt_rand(000000, 300000),
-                'Pasquali' => mt_rand(000000, 300000),
-                'Pasquali1' => mt_rand(000000, 300000),
-                'Pasquali2' => mt_rand(000000, 300000),
+                'Agentes' => $colunas[$i],
+                'Contratos' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                'Tentativas' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                'Spin rate' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                'Tent /Agnt' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%Incorreto' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                'Atendidas' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%Hit rate' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                'CPC' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%CPC /Aten' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                'CPC /Agnt' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                'CPCA' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%CPCA /Aten' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                'CPCA /Agnt' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                'Negociações' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%Negc /Atend' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                '%Negc /Tent' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                '%Negc /CPC' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                '%Negc /CPCA' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                'Negc /Agnt' => number_format(mt_rand(000000, 300000), 2, ',', '.'),
+                '%Improd' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                '%Linha muda' => number_format(mt_rand(00, 100), 2, ',', '.'),
+                '%Voz Máq' => number_format(mt_rand(00, 100), 2, ',', '.'),
             ];
 
         }
@@ -82,7 +82,7 @@ class ComparativeController extends Controller
             ];
 
             for ($i = 0; $i < count($ocurrence); $i++) {
-                $data[$i] = (object) [
+                $data[$i] = (object)[
                     'Perfil' => 'PF',
                     'Segmento' => 'Consignado',
                     'Empresa' => 'Flex',
