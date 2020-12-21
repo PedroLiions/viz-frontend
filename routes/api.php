@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Dashboards\AgentsController;
+use App\Http\Controllers\Dashboards\BestTimeController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -107,9 +109,9 @@ Route::group([
 
         Route::group(['prefix' => 'best-time'], function () {
 
-            Route::get('', 'AgentsController@bestTime');
+            Route::get('', [BestTimeController::class, 'bestTimeGraphics']);
 
-            Route::get('distribution-by-hour', [\App\Http\Controllers\Dashboards\AgentsController::class, 'distributionByHour']);
+            Route::get('distribution-by-hour', [BestTimeController::class, 'distributionByHour']);
 
         });
 

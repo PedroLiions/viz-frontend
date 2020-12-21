@@ -9,12 +9,22 @@ class NumberService {
     }
 
     public function formatPercent($number) {
-        return number_format($number, '2', ',', '.');
+        $numberFormated = number_format($number, '1', ',', '.');
+        $numberWithPercent = "{$numberFormated}%";
+        return $numberWithPercent;
     }
 
     public function formatThousands($number)
     {
-        return number_format($number, '0', '', '.');
+        if ($number) {
+            return number_format($number, '0', '', '.');
+        }
+
+        return 0;
+    }
+
+    public function onlyNumbers($string) {
+        return preg_replace('/\D/', '', $string);
     }
 
 }
